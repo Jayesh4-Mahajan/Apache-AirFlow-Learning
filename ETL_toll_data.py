@@ -159,7 +159,7 @@ extract_data_from_csv=BashOperator(
 
 extract_data_from_tsv=BashOperator(
     task_id='extract_data_from_tsv',
-    bash_command='cut -f5,6,7 tollplaza-data.tsv | tr "\\t" "," > tsv_data.csv',
+    bash_command='cut -f5,6,7 tollplaza-data.tsv | tr "\\t" "," | tr -d "\r" > tsv_data.csv',
     dag=dag,
 )
 
