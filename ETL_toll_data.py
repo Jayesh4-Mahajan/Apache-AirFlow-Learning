@@ -169,12 +169,6 @@ extract_data_from_fixed_width=BashOperator(
     dag=dag,
 )
 
-extract_data_from_fixed_width=BashOperator(
-    task_id='extract_data_from_fixed_width',
-    bash_command='cut -c59-62,63-67 payment-data.txt | tr " " "," > fixed_width_data.csv',
-    dag=dag,
-)
-
 consolidate_data=BashOperator(
     task_id='consolidate_data',
     bash_command='paste -d"," csv_data.csv tsv_data.csv fixed_width_data.csv > extracted_data.csv',
@@ -183,10 +177,8 @@ consolidate_data=BashOperator(
 
 transform_data=BashOperator(
     task_id='transform_data',
-    bash_command='',
+    bash_command="awk -F, '$4 = toupper($4)' OFS=, extracted_data.csv > transformed_data.csv",
     dag=dag,
 )
 
-6 25 8 8 10 4 6
-
-awk 'BEGIN{FIELDWIDTHS="6 25 8 8 10 4 6";OFS=","}{$1=$1}1' file
+unzip_data >> extract_data_from_csv >> extract_data_from_tsv >> extract_data_from_fixed_width >> consolidate_data >> transform_data
